@@ -23,8 +23,7 @@ var db = new sqlite3.Database(`./config.db`, (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS config
         (id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
          local TEXT NOT NULL,
-         tempMax INTEGER NOT NULL, 
-         tempMin INTEGER NOT NULL,
+         tempDesejada INTEGER NOT NULL,
          tempAtual INTEGER NOT NULL)`,
          [], (err) => {
             if (err) {
@@ -49,8 +48,8 @@ app.post(`/config/`, (req, res, next) => {
     // if (!validation.success) { res.status(500).send(validation.message); return }
 
     // Adicionar ao banco
-    db.run(`INSERT INTO config(id, local, tempMax, tempMin, tempAtual) VALUES (?,?,?,?)`,
-        [req.body.id, req.body.local, req.body.tempMax, req.body.tempMin, req.body.tempAtual], (err) => {
+    db.run(`INSERT INTO config(id, local, tempDesejada, tempAtual) VALUES (?,?,?,?)`,
+        [req.body.id, req.body.local, req.body.tempDesejada, req.body.tempAtual], (err) => {
             if (err) {
                 res.status(500).send(`Erro ao cadastrar local: ${err}`);
             } else {
@@ -63,7 +62,7 @@ app.post(`/config/`, (req, res, next) => {
 app.get(`/config/`, (req, res, next) => {
     console.log(`GET request on /config`)
 
-    db.all(`SELECT * FROM config`, [], (err, rows) => {
+    db.all(`SELECT * FROM config`, [], (err, result) => {
         if (err) {
             res.status(500).send(`Erro ao obter dados: ${err}`);
         } else {
@@ -88,6 +87,22 @@ app.get(`/config/:id`, (req, res, next) => {
         });
 });
 
+// Envia somente a tempDesejada ao Arduino
+app.get(`/config/tempDesejada/:id`, (req, res, next) => {
+    console.log(`GET request on /config/tempDesejada/${req.params.id}`)
+
+    db.get(`SELECT tempDesejada FROM config WHERE id = ?`,
+        req.params.id, (err, result) => {
+            if(err) {
+                res.status(500).send(`Erro ao obter dados: ${err}`);
+            } else if (result == null) {
+                res.status(404).send(`Local não encontrado`);
+            } else {
+                res.status(200).json(result);
+            }
+        });
+});
+
 // Atualiza local
 app.patch(`/config/:id`, (req, res, next) => {
     console.log(`PATCH request on /config/${req.params.id}`)
@@ -101,8 +116,8 @@ app.patch(`/config/:id`, (req, res, next) => {
     // if (!validation.success) { res.status(500).send(validation.message); return }
 
     // Atualiza no BD
-    db.run(`UPDATE config SET local = COALESCE(?, local), tempMax = COALESCE(?, tempMax), tempMin = COALESCE(?, tempMin), tempAtual = COALESCE(?, tempAtual) WHERE id = ?`,
-        [req.body.local, req.body.tempMax, req.body.tempMin, req.body.tempAtual, req.params.id], function(err) {
+    db.run(`UPDATE config SET local = COALESCE(?, local), tempDesejada = COALESCE(?, tempDesejada), tempAtual = COALESCE(?, tempAtual) WHERE id = ?`,
+        [req.body.local, req.body.tempDesejada, req.body.tempAtual, req.params.id], function(err) {
             if (err) {
                 res.status(500).send(`Erro ao alterar dados: ${err}`);
             } else if (this.changes == 0) {
@@ -129,6 +144,24 @@ app.patch(`/config/tempAtual/:id`, (req, res, next) => {
             }
         });
 });
+
+// Atualiza tempDesejada
+app.patch(`/config/tempDesejada/:id`, (req, res, next) => {
+    console.log(`PATCH tempDesejada request on /config/${req.params.id}`)
+
+    // Atualiza no BD
+    db.run(`UPDATE config SET tempDesejada = COALESCE(?, tempDesejada) WHERE id = ?`,
+        [req.body.tempDesejada, req.params.id], function(err) {
+            if (err) {
+                res.status(500).send(`Erro ao alterar dados: ${err}`);
+            } else if (this.changes == 0) {
+                res.status(404).send(`Local não encontrado`);
+            } else {
+                res.status(200).send(`TempDesejada do local alterado com sucesso!`);
+            }
+        });
+});
+
 
 // Exclui o local
 app.delete(`/config/:id`, (req, res, next) => {
