@@ -1,0 +1,93 @@
+### API Gateway Test Routes
+
+# Base URL for the API gateway
+@baseUrl = http://localhost:8000
+
+### 1. Test Config Service - Get all sensors
+GET {{baseUrl}}/config/
+
+### 2. Test Config Service - Create a new sensor
+POST {{baseUrl}}/config/
+Content-Type: application/json
+
+{
+    "id": 1,
+    "local": "Living Room",
+    "tempDesejada": 22,
+    "tempAtual": 21
+}
+
+### 3. Test Config Service - Get specific sensor
+GET {{baseUrl}}/config/1
+
+### 4. Test Config Service - Update sensor
+PATCH {{baseUrl}}/config/1
+Content-Type: application/json
+
+{
+    "local": "Dining Room",
+    "tempDesejada": 24
+}
+
+### 5. Test Config Service - Update desired temperature
+PATCH {{baseUrl}}/config/tempDesejada/1
+Content-Type: application/json
+
+{
+    "tempDesejada": 25
+}
+
+### 6. Test Config Service - Update current temperature
+PATCH {{baseUrl}}/config/tempAtual/1
+Content-Type: application/json
+
+{
+    "tempAtual": 23
+}
+
+### 7. Test Config Service - Get desired temperature for Arduino
+GET {{baseUrl}}/config/tempDesejada/1
+
+### 8. Test Config Service - Delete sensor
+DELETE {{baseUrl}}/config/1
+
+### 9. Test Logging Service - Create a log entry
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "API Gateway Test",
+    "status": "SUCCESS",
+    "descricao": "Testing API gateway functionality"
+}
+
+### 10. Test Logging Service - Get all logs
+GET {{baseUrl}}/logging/
+
+### 11. Test invalid endpoint (should return 404)
+GET {{baseUrl}}/invalid/
+
+### 12. Test Config Service - Create multiple sensors for testing
+POST {{baseUrl}}/config/
+Content-Type: application/json
+
+{
+    "id": 2,
+    "local": "Bedroom",
+    "tempDesejada": 20,
+    "tempAtual": 19
+}
+
+### 13. Test Config Service - Create another sensor
+POST {{baseUrl}}/config/
+Content-Type: application/json
+
+{
+    "id": 3,
+    "local": "Kitchen",
+    "tempDesejada": 23,
+    "tempAtual": 24
+}
+
+### 14. Test Config Service - Get all sensors again
+GET {{baseUrl}}/config/ 

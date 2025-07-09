@@ -12,7 +12,7 @@ const char* password = "AnaKaren@25";
 
 // Configurações do servidor
 const char* serverAddress = "192.168.15.10";
-const int serverPort = 8080;
+const int serverPort = 8000;
 const int deviceId = 1;
 
 // Variáveis para os dados recebidos do servidor

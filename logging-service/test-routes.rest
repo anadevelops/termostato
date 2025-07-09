@@ -1,0 +1,109 @@
+### Logging Service Test Routes
+
+# Base URL for the logging service
+@baseUrl = http://localhost:8070
+
+### 1. Create a new log entry
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Sensor Temperature",
+    "status": "SUCCESS",
+    "descricao": "Temperature reading recorded successfully"
+}
+
+### 2. Create another log entry with different data
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Heater Control",
+    "status": "WARNING",
+    "descricao": "Heater temperature exceeded threshold"
+}
+
+### 3. Create a log entry for error scenario
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Database Connection",
+    "status": "ERROR",
+    "descricao": "Failed to connect to database"
+}
+
+### 4. Create a log entry for system startup
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "System Startup",
+    "status": "INFO",
+    "descricao": "Thermostat system initialized successfully"
+}
+
+### 5. Create a log entry for sensor calibration
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Sensor Calibration",
+    "status": "SUCCESS",
+    "descricao": "Temperature sensor calibrated with offset +0.5°C"
+}
+
+### 6. Get all log entries
+GET {{baseUrl}}/logging/
+
+### 7. Test with missing required fields (should fail)
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Incomplete Log",
+    "status": "ERROR"
+}
+
+### 8. Test with empty values
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "",
+    "status": "",
+    "descricao": ""
+}
+
+### 9. Test with special characters
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Special Chars Test",
+    "status": "SUCCESS",
+    "descricao": "Testing with special characters: áéíóú ñ ç ã õ"
+}
+
+### 10. Test with very long description
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "Long Description Test",
+    "status": "INFO",
+    "descricao": "This is a very long description to test how the system handles large text inputs. It contains multiple sentences and should be stored properly in the database without any truncation or errors. The system should be able to handle this gracefully."
+}
+
+### 11. Test with JSON special characters
+POST {{baseUrl}}/logging/
+Content-Type: application/json
+
+{
+    "evento": "JSON Test",
+    "status": "SUCCESS",
+    "descricao": "Testing with JSON special chars: \"quotes\", \\backslashes\\, and \n newlines"
+}
+
+### 12. Get all logs again to verify entries were created
+GET {{baseUrl}}/logging/ 
