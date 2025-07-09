@@ -21,8 +21,7 @@ Content-Type: application/json
 {
     "id": 2,
     "local": "Quarto",
-    "tempDesejada": 24,
-    "tempAtual": 23
+    "tempDesejada": 24
 }
 
 ###
@@ -74,7 +73,7 @@ PATCH http://localhost:8080/config/tempDesejada/1
 Content-Type: application/json
 
 {
-    "tempDesejada": 23
+    "tempDesejada": 25
 }
 
 ###

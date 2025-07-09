@@ -6,7 +6,6 @@ export default function AddSensorScreen({ navigation }) {
   const [local, setLocal] = useState('');
   const [id, setId] = useState('');
   const [tempDesejada, setTempDesejada] = useState('22');
-  const [tempAtual, setTempAtual] = useState('20');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -22,11 +21,10 @@ export default function AddSensorScreen({ navigation }) {
       return;
     }
 
-    // Validate temperatures are numbers
+    // Validate temperature is a number
     const desiredTemp = parseInt(tempDesejada);
-    const currentTemp = parseInt(tempAtual);
-    if (isNaN(desiredTemp) || isNaN(currentTemp)) {
-      Alert.alert('Error', 'Temperatures must be numbers');
+    if (isNaN(desiredTemp)) {
+      Alert.alert('Error', 'Desired temperature must be a number');
       return;
     }
 
@@ -35,11 +33,10 @@ export default function AddSensorScreen({ navigation }) {
       await addSensor({ 
         id: numericId,
         local,
-        tempDesejada: desiredTemp,
-        tempAtual: currentTemp
+        tempDesejada: desiredTemp
       });
       Alert.alert('Success', 'Sensor added successfully');
-      navigation.goBack();
+      navigation.goBack({ params: { newSensorId: numericId } });
     } catch (e) {
       Alert.alert('Error', 'Failed to add sensor: ' + e.message);
     }
@@ -48,8 +45,6 @@ export default function AddSensorScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Add New Sensor</Text>
-      
       <Text style={styles.label}>Sensor ID *</Text>
       <TextInput
         style={styles.input}
@@ -79,15 +74,7 @@ export default function AddSensorScreen({ navigation }) {
         maxLength={3}
       />
 
-      <Text style={styles.label}>Current Temperature (°C)</Text>
-      <TextInput
-        style={styles.input}
-        value={tempAtual}
-        onChangeText={setTempAtual}
-        placeholder="20"
-        keyboardType="numeric"
-        maxLength={3}
-      />
+
 
       <View style={styles.buttonContainer}>
         <Button 
@@ -100,7 +87,8 @@ export default function AddSensorScreen({ navigation }) {
 
       <Text style={styles.note}>
         * Required fields{'\n'}
-        Temperatures will default to 22°C (desired) and 20°C (current) if left empty
+        Current temperature will be set by the sensor hardware{'\n'}
+        Desired temperature defaults to 22°C if left empty
       </Text>
     </ScrollView>
   );
@@ -111,13 +99,6 @@ const styles = StyleSheet.create({
     flex: 1, 
     padding: 24, 
     backgroundColor: '#fff' 
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333'
   },
   label: { 
     fontSize: 16, 

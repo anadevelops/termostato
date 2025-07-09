@@ -22,8 +22,7 @@ export const addSensor = async (sensor) => {
     body: JSON.stringify({
       id: sensor.id,
       local: sensor.local,
-      tempDesejada: sensor.tempDesejada,
-      tempAtual: sensor.tempAtual
+      tempDesejada: sensor.tempDesejada
     }),
   });
   if (!res.ok) throw new Error('Failed to add sensor');

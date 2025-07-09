@@ -24,7 +24,7 @@ db.run(`CREATE TABLE IF NOT EXISTS config
         (id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
          local TEXT NOT NULL,
          tempDesejada INTEGER NOT NULL,
-         tempAtual INTEGER NOT NULL)`,
+         tempAtual INTEGER)`,
          [], (err) => {
             if (err) {
                 console.log(`ERRO: Não foi possível criar a tabela`);
@@ -49,7 +49,7 @@ app.post(`/config/`, (req, res, next) => {
 
     // Adicionar ao banco
     db.run(`INSERT INTO config(id, local, tempDesejada, tempAtual) VALUES (?,?,?,?)`,
-        [req.body.id, req.body.local, req.body.tempDesejada, req.body.tempAtual], (err) => {
+        [req.body.id, req.body.local, req.body.tempDesejada, req.body.tempAtual || null], (err) => {
             if (err) {
                 res.status(500).send(`Erro ao cadastrar local: ${err}`);
             } else {
